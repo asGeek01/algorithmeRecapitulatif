@@ -1,0 +1,374 @@
+FONCTIONS_UTILISEES
+  //fonction permettant de renvoyer l'identite de l'utilisateur
+  FONCTION menuIdentite( )
+    VARIABLES_FONCTION
+      choixEffectuer EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Veuillez confirmer votre identite : "
+    AFFICHER* "1. Utilisateur"
+    AFFICHER* "2. Bibliothéquaire"
+    AFFICHER* "3. Administrateur"
+    LIRE choixEffectuer
+    RENVOYER choixEffectuer
+    FIN_FONCTION
+  //la fonction permettant à un utilisateur de choisir l'operation qu'il veut effectuer
+  FONCTION menuUtilisateur( )
+    VARIABLES_FONCTION
+      choixOperer EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Quelle opération aimeriez-vous effectuer ? "
+    AFFICHER* "1. Afficher tous les livres avec leur statut"
+    AFFICHER* "2. Emprunter un livre en entrant son numero"
+    AFFICHER* "3. Rendre un livre en entrant son numero"
+    LIRE choixOperer
+    RENVOYER choixOperer
+    FIN_FONCTION
+  //les operations de menu pour les bibliothéquaire
+  FONCTION menuBibliothequaire( )
+    VARIABLES_FONCTION
+      choixBiblio EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Quelle opération aimeriez-vous effectuer ? "
+    AFFICHER* "1. Ajouter un livre"
+    AFFICHER* "2. Afficher la liste des livres"
+    AFFICHER* "3. Afficher les livres disponibles"
+    AFFICHER* "4. Afficher les livres empruntés"
+    LIRE choixBiblio
+    RENVOYER choixBiblio
+    FIN_FONCTION
+  //les operations de l'administrateur
+  FONCTION menuAdministrateur( )
+    VARIABLES_FONCTION
+      choixAdmin EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Quelle opération aimeriez-vous effectuer ? "
+    AFFICHER* "1. Initialiser la liste des livres"
+    AFFICHER* "2. Supprimer un utilisateur"
+    LIRE choixAdmin
+    RENVOYER choixAdmin
+    FIN_FONCTION
+  //la fonction permettant d'initialiser la liste des livres
+  FONCTION initialisationListe(listeLivres)
+    VARIABLES_FONCTION
+    DEBUT_FONCTION
+    listeLivres[0*totalColonneListe+0] PREND_LA_VALEUR 1:1:2:0:3:1:4:1:5:0
+    //AFFICHER* "Tableau initialiser avec succes"
+    FIN_FONCTION
+  //cette fonction permet de renvoyer le nom des livres
+  FONCTION nomLivre(indexLivre)
+    VARIABLES_FONCTION
+      indexNom EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    indexNom PREND_LA_VALEUR indexLivre
+    AFFICHER "Livre "
+    AFFICHER indexNom
+    FIN_FONCTION
+  //cette fonction permet de renvoyer le statut des livres
+  FONCTION statutLivre(indexStatut)
+    VARIABLES_FONCTION
+      statut EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    statut PREND_LA_VALEUR indexStatut
+    SI (statut == 0) ALORS
+      DEBUT_SI
+      AFFICHER "Emprunter"
+      FIN_SI
+      SINON
+        DEBUT_SINON
+        SI (statut == 1) ALORS
+          DEBUT_SI
+          AFFICHER "Disponible"
+          FIN_SI
+          SINON
+            DEBUT_SINON
+            AFFICHER "Statut errone"
+            FIN_SINON
+        FIN_SINON
+    FIN_FONCTION
+  FONCTION afficherListe(listeLivres)
+    VARIABLES_FONCTION
+      ligne EST_DU_TYPE NOMBRE
+      nbreLigne EST_DU_TYPE NOMBRE
+      colonne EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* " "
+    //verification de la taille du tableau
+    SI (totalColonneListe != 0 ET listeLivres.length % totalColonneListe == 0) ALORS
+      DEBUT_SI
+      nbreLigne PREND_LA_VALEUR listeLivres.length / totalColonneListe
+      //l'affichage des element de la liste
+      //iteration de la ligne
+      POUR ligne ALLANT_DE 0 A nbreLigne-1
+        DEBUT_POUR
+        AFFICHERCALCUL ligne+1
+        AFFICHER ". "
+        POUR colonne ALLANT_DE 0 A totalColonneListe-1
+          DEBUT_POUR
+          SI (colonne == 0) ALORS
+            DEBUT_SI
+            APPELER_FONCTION nomLivre(listeLivres[ligne*totalColonneListe+colonne])
+            AFFICHER " --------> "
+            FIN_SI
+            SINON
+              DEBUT_SINON
+              SI (colonne == 1) ALORS
+                DEBUT_SI
+                APPELER_FONCTION statutLivre(listeLivres[ligne*totalColonneListe+colonne])
+                FIN_SI
+                SINON
+                  DEBUT_SINON
+                  AFFICHER "Index non correspondant"
+                  FIN_SINON
+              FIN_SINON
+          FIN_POUR
+        AFFICHER* " "
+        FIN_POUR
+      FIN_SI
+      SINON
+        DEBUT_SINON
+        AFFICHER* "Taille du tableau invalide"
+        FIN_SINON
+    AFFICHER* " "
+    FIN_FONCTION
+  //cette fonction permet de demander à effectuer une autre operation
+  FONCTION demandeDeRepeter( )
+    VARIABLES_FONCTION
+      choixBool EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Voulez vous effectuer une autre opération ? "
+    AFFICHER* "Oui --> 1 ; Non --> Autre"
+    LIRE choixBool
+    RENVOYER choixBool
+    FIN_FONCTION
+  //fonction pour emprunter un livre
+  FONCTION emprunterLivre(listeLivres)
+    VARIABLES_FONCTION
+      indexEmprunt EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Quel livre voulez-vous emprunter ? "
+    LIRE indexEmprunt
+    //verification si l'index du livre est compris entre la taille de ligne du tableau
+    SI (indexEmprunt >= 1 ET indexEmprunt <= listeLivres.length / totalColonneListe) ALORS
+      DEBUT_SI
+      indexEmprunt PREND_LA_VALEUR indexEmprunt-1
+      SI (listeLivres[indexEmprunt*totalColonneListe+1] == 1) ALORS
+        DEBUT_SI
+        listeLivres[indexEmprunt*totalColonneListe+1] PREND_LA_VALEUR 0
+        AFFICHER "Vous venez d'emprunter le livre : "
+        APPELER_FONCTION nomLivre(listeLivres[indexEmprunt*totalColonneListe+0])
+        AFFICHER* " "
+        FIN_SI
+        SINON
+          DEBUT_SINON
+          AFFICHER* "Le livre n'est pas disponible."
+          AFFICHER* " "
+          FIN_SINON
+      FIN_SI
+      SINON
+        DEBUT_SINON
+        AFFICHER* "Index du livre invalide"
+        FIN_SINON
+    FIN_FONCTION
+  //la fonction permettant de rendre un livre
+  FONCTION rendreLivre(listeLivres)
+    VARIABLES_FONCTION
+      indexRendre EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Quel livre voulez-vous rendre ? "
+    LIRE indexRendre
+    //verification si l'index du livre est compris entre la taille de ligne du tableau
+    SI (indexRendre >= 1 ET indexRendre <= listeLivres.length / totalColonneListe) ALORS
+      DEBUT_SI
+      indexRendre PREND_LA_VALEUR indexRendre-1
+      SI (listeLivres[indexRendre*totalColonneListe+1] == 0) ALORS
+        DEBUT_SI
+        listeLivres[indexRendre*totalColonneListe+1] PREND_LA_VALEUR 1
+        AFFICHER "Vous venez de rendre le livre : "
+        APPELER_FONCTION nomLivre(listeLivres[indexRendre*totalColonneListe+0])
+        APPELER_FONCTION statutLivre(listeLivres[indexRendre*totalColonneListe+1])
+        AFFICHER* " "
+        FIN_SI
+        SINON
+          DEBUT_SINON
+          AFFICHER* "Le livre n'est pas emprunté."
+          AFFICHER* " "
+          FIN_SINON
+      FIN_SI
+      SINON
+        DEBUT_SINON
+        AFFICHER* "Index du livre invalide"
+        FIN_SINON
+    FIN_FONCTION
+  //fontion permettant d'ajouter un livre
+  FONCTION ajouterLivre(listeLivres)
+    VARIABLES_FONCTION
+      confirmAjout EST_DU_TYPE NOMBRE
+      ligneAjout EST_DU_TYPE NOMBRE
+    DEBUT_FONCTION
+    AFFICHER* "Voulez-vous vraiment ajouter un livre ? "
+    AFFICHER* "Oui --> 1 ; Non --> Autre"
+    LIRE confirmAjout
+    SI (confirmAjout == 1) ALORS
+      DEBUT_SI
+      SI (totalColonneListe != 0 ET listeLivres.length % totalColonneListe == 0) ALORS
+        DEBUT_SI
+        ligneAjout PREND_LA_VALEUR listeLivres.length / totalColonneListe
+        //ajout du l'index du livre
+        listeLivres[ligneAjout*totalColonneListe+0] PREND_LA_VALEUR ligneAjout+1
+        listeLivres[ligneAjout*totalColonneListe+1] PREND_LA_VALEUR 1
+        APPELER_FONCTION nomLivre(listeLivres[ligneAjout*totalColonneListe+0])
+        AFFICHER* " a été ajouté avec succès"
+        FIN_SI
+      FIN_SI
+    FIN_FONCTION
+VARIABLES
+  userIdentite EST_DU_TYPE NOMBRE
+  operationUtilisateur EST_DU_TYPE NOMBRE
+  listeLivres EST_DU_TYPE LISTE
+  repeterOperation EST_DU_TYPE NOMBRE
+  totalColonneListe EST_DU_TYPE NOMBRE
+  operationBibliothequaire EST_DU_TYPE NOMBRE
+  operationAdministrateur EST_DU_TYPE NOMBRE
+DEBUT_ALGORITHME
+  //initialisation des variables
+  totalColonneListe PREND_LA_VALEUR 2
+  APPELER_FONCTION initialisationListe(listeLivres)
+  //affichage du message de bienvenu
+  AFFICHER* "Bienvenu à  e-Biblio !! Votre bibliothèque numérique."
+  //appelle de la fonction permettant de choisir l'identite de l'utilisateur
+  userIdentite PREND_LA_VALEUR menuIdentite()
+  //verification de l'identite de l'utilisateur
+  SI (userIdentite == 1) ALORS
+    DEBUT_SI
+    AFFICHER* "Bonjour cher Utilisateur :)"
+    repeterOperation PREND_LA_VALEUR 1
+    TANT_QUE (repeterOperation == 1) FAIRE
+      DEBUT_TANT_QUE
+      //appelle de la fonction des operation pour utilisateur
+      operationUtilisateur PREND_LA_VALEUR menuUtilisateur()
+      // verification du choix de l'utilisateur
+      SI (operationUtilisateur == 1) ALORS
+        DEBUT_SI
+        //AFFICHER* "Operation 1"
+        AFFICHER* "¤¤¤¤¤¤¤¤¤¤ Voici la liste de tous les livres ¤¤¤¤¤¤¤¤¤¤"
+        //affichage des livres de la liste
+        APPELER_FONCTION afficherListe(listeLivres)
+        //effectuer une autre opération ?
+        repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+        FIN_SI
+        SINON
+          DEBUT_SINON
+          SI (operationUtilisateur == 2) ALORS
+            DEBUT_SI
+            AFFICHER* "~~~~~~~~~~~~ Voici la liste des livres ~~~~~~~~~~~~"
+            //affichage des livres
+            APPELER_FONCTION afficherListe(listeLivres)
+            //appelle de la fonction emprunter
+            APPELER_FONCTION emprunterLivre(listeLivres)
+            //effectuer une autre operation ?
+            repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+            FIN_SI
+            SINON
+              DEBUT_SINON
+              SI (operationUtilisateur == 3) ALORS
+                DEBUT_SI
+                AFFICHER* "~~~~~~~~~~~~ Voici la liste des livres ~~~~~~~~~~~~"
+                //affichage des livres
+                APPELER_FONCTION afficherListe(listeLivres)
+                //appelle de la fonction permettant de rendre un livre
+                APPELER_FONCTION rendreLivre(listeLivres)
+                //effectuer une autre operation ?
+                repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+                FIN_SI
+                SINON
+                  DEBUT_SINON
+                  AFFICHER* "Choix d'opération errone"
+                  FIN_SINON
+              FIN_SINON
+          FIN_SINON
+      FIN_TANT_QUE
+    FIN_SI
+    SINON
+      DEBUT_SINON
+      SI (userIdentite == 2) ALORS
+        DEBUT_SI
+        AFFICHER* "Bonjour cher Bibliothèquaire"
+        repeterOperation PREND_LA_VALEUR 1
+        TANT_QUE (repeterOperation == 1) FAIRE
+          DEBUT_TANT_QUE
+          //appelle de la fonction des menus
+          operationBibliothequaire PREND_LA_VALEUR menuBibliothequaire()
+          SI (operationBibliothequaire == 1) ALORS
+            DEBUT_SI
+            AFFICHER* "~~~~~~~~~~~ Ajout d'un livre ~~~~~~~~~~~"
+            //appelle de la fonction d'ajout
+            APPELER_FONCTION ajouterLivre(listeLivres)
+            //effectuer une autre operation ?
+            repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+            FIN_SI
+            SINON
+              DEBUT_SINON
+              SI (operationBibliothequaire == 2) ALORS
+                DEBUT_SI
+                AFFICHER* "~~~~~~~~~ Liste des livres ~~~~~~~~~~~"
+                //appelle de la fonction de la liste des livres
+                APPELER_FONCTION afficherListe(listeLivres)
+                //effectuer une autre operation ?
+                repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+                FIN_SI
+                SINON
+                  DEBUT_SINON
+                  SI (operationBibliothequaire == 3) ALORS
+                    DEBUT_SI
+                    AFFICHER* "~~~~~~~~ Liste des livres disponibles ~~~~~~~~"
+                    //effectuer une autre operation ?
+                    repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+                    FIN_SI
+                    SINON
+                      DEBUT_SINON
+                      SI (operationBibliothequaire == 4) ALORS
+                        DEBUT_SI
+                        AFFICHER* "~~~~~~~~ Liste des livres empruntés ~~~~~~~~"
+                        //effectuer une autre operation ?
+                        repeterOperation PREND_LA_VALEUR demandeDeRepeter()
+                        FIN_SI
+                        SINON
+                          DEBUT_SINON
+                          AFFICHER* "Choix d'opération invalide"
+                          FIN_SINON
+                      FIN_SINON
+                  FIN_SINON
+              FIN_SINON
+          FIN_TANT_QUE
+        FIN_SI
+        SINON
+          DEBUT_SINON
+          SI (userIdentite == 3) ALORS
+            DEBUT_SI
+            AFFICHER* "Bonjour cher Administrateur"
+            //appelle a la fonction des menu de l'administrateur
+            operationAdministrateur PREND_LA_VALEUR menuAdministrateur()
+            SI (operationAdministrateur == 1) ALORS
+              DEBUT_SI
+              AFFICHER* "~~~~~ Initialisation de la liste des livres ~~~~~"
+              FIN_SI
+              SINON
+                DEBUT_SINON
+                SI (operationAdministrateur == 2) ALORS
+                  DEBUT_SI
+                  AFFICHER* "~~~~~~~~~~ Supprimer un utilisateur ~~~~~~~~~~"
+                  FIN_SI
+                  SINON
+                    DEBUT_SINON
+                    AFFICHER* "Choix d'opération errone"
+                    FIN_SINON
+                FIN_SINON
+            FIN_SI
+            SINON
+              DEBUT_SINON
+              AFFICHER "Identite utilisateur inexistant"
+              FIN_SINON
+          FIN_SINON
+      FIN_SINON
+FIN_ALGORITHME
+
